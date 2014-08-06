@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+check(){
+ if [[ $? == "0" ]]
+ then
+   echo "success on $1"
+ else
+   echo "failed on $1"
+   exit 1
+ fi
+}
+
+ADW="/usr/local/apache/htdocs/wordpress"
+cd $ADW;
+check change_dir
+cp wp-config-sample.php wp-config.php
+check cp_wp_config
+sed -i 's/database_name_here/wp/g' wp-config.php
+check db
+sed -i 's/username_here/wpuser/g' wp-config.php
+check user
+sed -i 's/password_here/hipass\$/g' wp-config.php
+check passwd
+

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+mysql -u root -prootpass <<-EOH
+        drop database wp;
+        create database wp;
+        delete from mysql.user where user='wpuser';
+        grant select,update,delete,create on wp.* to 'wpuser'@'localhost' identified by 'hipass$';
+        flush privileges;
+EOH
