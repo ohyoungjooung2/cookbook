@@ -49,3 +49,7 @@ bash 'oracle_java_7' do
     EOH
 
 end
+
+    file "/root/jdk-7u60-linux-x64.tar.gz" do
+     action :delete
+    end
