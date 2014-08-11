@@ -16,8 +16,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-package "build-essential" do
-  action :install
+case node["platform"]
+when "debian","ubuntu"
+ package "build-essential" do
+   action :install
+ end
+when "redhat","centos","fedora"
+ %w{make automake gcc gcc-c++ kernel-devel}.each do |pkgs|
+    package pkgs do
+     action :install
+    end
+  end
 end
 
 user node[:redis][:user] do
@@ -65,11 +74,21 @@ bash "compile_redis_source" do
   creates "/usr/local/bin/redis-server"
 end
 
-service "redis" do
+case node["platform"]
+ when "debian","ubuntu"
+ service "redis" do
   provider Chef::Provider::Service::Init::Debian
   subscribes :restart, resources(:bash => "compile_redis_source")
   supports :restart => true, :start => true, :stop => true
+ end
+ when "redhat","centos","fedora"
+ service "redis" do
+  provider Chef::Provider::Service::Init::Redhat
+  subscribes :start, resources(:bash => "compile_redis_source")
+  supports :restart => true, :start => true, :stop => true
+ end
 end
+  
 
 template "redis.conf" do
   path "#{node[:redis][:dir]}/redis.conf"
@@ -79,13 +98,28 @@ template "redis.conf" do
   mode "0644"
   notifies :restart, resources(:service => "redis")
 end
-template "redis.start.conf" do
-  path "/etc/init.d/redis"
-  source "redis.start.conf.erb"
-  owner "root"
-  group "root"
-  mode "0755"
-  notifies :restart, resources(:service => "redis")
+
+case node["platform"]
+ when "debian","ubuntu"
+   template "redis.start.conf" do
+   path "/etc/init.d/redis"
+   source "redis.start.conf.erb"
+   owner "root"
+   group "root"
+   mode "0755"
+   notifies :restart, resources(:service => "redis")
+   end
+ when "redhat","centos","fedora"
+   template "redis.rcf.start.conf" do
+   path "/etc/init.d/redis"
+   source "redis.rcf.start.conf"
+   path "/etc/init.d/redis"
+   source "redis.rcf.start.conf.erb"
+   owner "root"
+   group "root"
+   mode "0755"
+   notifies :restart, resources(:service => "redis")
+   end
 end
 
 service "redis" do
