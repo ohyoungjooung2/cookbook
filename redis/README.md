@@ -1,23 +1,21 @@
 redis Cookbook
 ==============
-TODO: Enter the cookbook description here.
+Redis for centos6.5,ubuntu14.04
 
-e.g.
-This cookbook makes your favorite breakfast sandwich.
+
+This cookbook makes you install redis server and start file on centos65,ubuntu14.04 server. Other versions are not tested yet.
 
 Requirements
 ------------
-TODO: List your cookbook requirements. Be sure to include any requirements this cookbook has on platforms, libraries, other cookbooks, packages, operating systems, etc.
+ubuntu14.04, centos65 are tested. So, these two distros are required.
 
 e.g.
 #### packages
-- `toaster` - redis needs toaster to brown your bagel.
+Source stable version release
 
 Attributes
 ----------
-TODO: List your cookbook attributes here.
 
-e.g.
 #### redis::default
 <table>
   <tr>
@@ -37,9 +35,7 @@ e.g.
 Usage
 -----
 #### redis::default
-TODO: Write usage instructions for each cookbook.
 
-e.g.
 Just include `redis` in your node's `run_list`:
 
 ```json
@@ -50,6 +46,7 @@ Just include `redis` in your node's `run_list`:
   ]
 }
 ```
+Or, sudo chef-client -o redis from client etc.
 
 Contributing
 ------------
@@ -65,4 +62,10 @@ e.g.
 
 License and Authors
 -------------------
-Authors: TODO: List authors
+I referred below site first and add sysv init script, instead of Upstart.
+http://reiddraper.com/first-chef-recipe/
+
+License: Aapche2.0
+ Reid Draper@reiddraper 
+ ohyoungjooung(wnapdlf05@gmail.com)
+
