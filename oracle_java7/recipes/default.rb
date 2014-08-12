@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 case node["platform"]
-when "ubuntu"
+when "debian","ubuntu"
  bash 'oracle_java_7_ubuntu' do
      user "root"
      cwd "/root"
