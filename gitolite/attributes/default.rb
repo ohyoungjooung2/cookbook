@@ -1,0 +1,5 @@
+default[:go][:user] = "git"
+default[:go][:group] = "git"
+default[:go][:url] = "git://github.com/sitaramc/gitolite"
+default[:go][:pk] = "oyj.pub"
+default[:go][:home] = "/home/git"
