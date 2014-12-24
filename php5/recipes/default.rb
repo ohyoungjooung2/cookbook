@@ -69,7 +69,13 @@ bash 'php5_debian_from_sc' do
    EOH
 end
 
-  service "apache" do
+ service "apache2" do
+  provider Chef::Provider::Service::Init::Debian
+  subscribes :restart, resources(:bash => "php5_debian_from_sc")
+  supports :restart => true, :start => true, :stop => true 
+end
+
+  service "apache2" do
    action [:enable,:restart]
   end
 
