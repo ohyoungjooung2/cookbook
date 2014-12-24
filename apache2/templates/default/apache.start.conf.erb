@@ -1,65 +1,90 @@
 #! /bin/sh
 
 ### BEGIN INIT INFO
-# Provides:            redis
+# Provides:            apache2
 # Required-Start:   
 # Default-Start:       2 3 4 5
 # Default-Stop:        0 1 6
-# Short-Description:   redis 
-# Description :        The redis is key value memory-based cache server
+# Short-Description:   apache web server 
+# Description :        
 #
 ### END INIT INFO
-REDISPORT=<%= node[:redis][:port] %>
-EXEC=/usr/local/bin/redis-server
-CLIEXEC=/usr/local/bin/redis-cli
-PIDFILE=<%= node[:redis][:pid_file]%>
-CONF=<%= node[:redis][:con_file]%>
-USER=<%= node[:redis][:user] %>
+ARGV="$@"
+#
+# |||||||||||||||||||| START CONFIGURATION SECTION  ||||||||||||||||||||
+# --------------------                              --------------------
+# 
+# the path to your httpd binary, including options if necessary
+HTTPD='<%= node[:apache][:httpd] %>'
+#
+# pick up any necessary environment variables
+if test -f /usr/local/apache/bin/envvars; then
+  . /usr/local/apache/bin/envvars
+fi
+#
+# a command that outputs a formatted text version of the HTML at the
+# url given on the command line.  Designed for lynx, however other
+# programs may work.  
+LYNX="lynx -dump"
+#
+# the URL to your server's mod_status status page.  If you do not
+# have one, then status and fullstatus will not work.
+STATUSURL="http://localhost:<%= node[:apache][:port] %>/server-status"
+#
+# Set this variable to a command that increases the maximum
+# number of file descriptors allowed per child process. This is
+# critical for configurations that use many file descriptors,
+# such as mass vhosting, or a multithreaded server.
+ULIMIT_MAX_FILES="ulimit -S -n `ulimit -H -n`"
+# --------------------                              --------------------
+# ||||||||||||||||||||   END CONFIGURATION SECTION  ||||||||||||||||||||
 
-start(){
-      if [ -f $PIDFILE ]
-      then
-          echo "$PIDFILE exists, process is already running or crashed"
-      else
-          echo "Starting Redis server..."
-          exec sudo -u $USER sh -c "$EXEC $CONF 2>&1 >> <%= node[:redis][:log_file]%>"
-      fi
+# Set the maximum number of file descriptors allowed per child process.
+if [ "x$ULIMIT_MAX_FILES" != "x" ] ; then
+    $ULIMIT_MAX_FILES
+fi
+
+ERROR=0
+if [ "x$ARGV" = "x" ] ; then 
+    ARGV="-h"
+fi
+
+errchk(){
+  if [ $ERROR=="0" ]
+    then
+      echo $ARGV SUCCESS
+    else
+      echo $ARGV FAILED
+      exit 
+    fi
 }
 
-stop(){
-      if [ ! -f $PIDFILE ]
-      then
-          echo "$PIDFILE does not exist, process is not running"
-      else
-          PID=$(cat $PIDFILE)
-          echo "Stopping..."
-          $CLIEXEC -p $REDISPORT shutdown
-          while [ -x /proc/${PID} ]
-          do
-             echo "Waiting for Redis to shutdown..."
-             sleep 1
-          done
-          echo "Redis stopped"
-       fi
-      }
 
-
-case "$1" in
-
-  start)
-        start
-        ;;
-
-      
-  stop)
-        stop
-        ;;
-
-  restart)
-        stop; start;
-        ;; 
-   *)
-   echo "Usage: $0 {start|stop|restart}"
-       exit 1
-       ;;
+case $ARGV in
+start|stop|restart|graceful|graceful-stop)
+    $HTTPD -k $ARGV
+    ERROR=$?
+    errchk
+    ;;
+startssl|sslstart|start-SSL)
+    echo The startssl option is no longer supported.
+    echo Please edit httpd.conf to include the SSL configuration settings
+    echo and then use "apachectl start".
+    ERROR=2
+    ;;
+configtest)
+    $HTTPD -t
+    ERROR=$?
+    ;;
+status)
+    $LYNX $STATUSURL | awk ' /process$/ { print; exit } { print } '
+    ;;
+fullstatus)
+    $LYNX $STATUSURL
+    ;;
+*)
+    $HTTPD $ARGV
+    ERROR=$?
 esac
+
+exit $ERROR

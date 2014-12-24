@@ -56,16 +56,22 @@ bash 'php5_debian_from_sc' do
    ./configure --with-apxs2=/usr/local/apache/bin/apxs --with-mysql
    make  
    check "php make"
+
    make install
    check "php make install"
+
    php_config
    check "php_config"
    echo "restarting apache"
-   sleep 3
-   /usr/local/apache/bin/apachectl restart
-   echo "/usr/local/apache/bin/apachectl start" >> /etc/rc.local
+#   sleep 3
+#   /usr/local/apache/bin/apachectl restart
+#   echo "/usr/local/apache/bin/apachectl start" >> /etc/rc.local
    EOH
 end
+
+  service "apache" do
+   action [:enable,:restart]
+  end
 
    file "/root/php-5.5.15.tar.gz" do
     action :delete

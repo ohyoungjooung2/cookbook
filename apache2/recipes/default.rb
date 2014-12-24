@@ -16,6 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+remote_file "/tmp/apache.tar.gz" do
+  source "http://10.0.0.1/httpd-2.2.29.tar.gz"
+  action :create
+end
 
 bash 'apache2_debian_sc' do
    user "root"
@@ -69,27 +73,46 @@ bash 'apache2_debian_sc' do
    echo "Installing apr-dev and utils"
    apt-get install libapr1-dev libaprutil1-dev
 
-   echo "Downloading apache server"
-   wget http://10.0.0.1/httpd-2.2.29.tar.gz
-   check wget_httpd
-
+   #echo "Downloading apache server"
+   #wget http://10.0.0.1/httpd-2.2.29.tar.gz
+   #check wget_httpd
+   cd /tmp
    echo "Untaring httpd and install"
-   tar xvzf httpd-2.2.29.tar.gz
+   tar xvzf apache.tar.gz
    cd httpd-2.2.29
    ./configure --prefix=/usr/local/apache --enable-so
    make
    make install
    port_change_dic
-   echo "trying to start apache server"
-   /usr/local/apache/bin/apachectl start
-
    EOH
 end
-   file "/root/httpd-2.2.29.tar.gz" do
-    action :delete
-   end
 
-   directory "/root/httpd-2.2.29" do
+service "apache2" do
+  provider Chef::Provider::Service::Init::Debian
+  subscribes :restart, resources(:bash => "apache2_debian_sc")
+  supports :restart => true, :start => true, :stop => true 
+end
+
+template "apache.start.conf.erb" do
+         path "/etc/init.d/apache2"
+         source "apache.start.conf.erb"
+         owner "root"
+         group "root"
+         mode "0755"
+end
+
+
+service "apache2" do
+     provider Chef::Provider::Service::Init::Debian
+     supports :restart => true, :start => true, :stop => true
+     action [:enable, :start]
+end
+ 
+file "/tmp/apache.tar.gz" do
+    action :delete
+end
+
+directory "/tmp/httpd-2.2.29" do
     recursive true
     action :delete
-   end
+end
