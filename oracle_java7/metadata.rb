@@ -1,4 +1,4 @@
-name             'java'
+name             'oracle_java7'
 maintainer       'Your Company, Inc.'
 maintainer_email 'cookbooks@yourcompany.com'
 license          'Apache 2.0'

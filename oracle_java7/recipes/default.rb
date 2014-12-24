@@ -34,7 +34,51 @@ when "debian","ubuntu"
 
       get_java(){
         #http://stackoverflow.com/questions/10268583/how-to-automate-download-and-installation-of-java-jdk-on-linux?rq=1
-        wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u60-b19/jdk-7u60-linux-x64.tar.gz -O jdk7.tar.gz
+        wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://10.0.0.1/jdk7.tar.gz
+      }
+
+     get_java
+     check getting_java
+
+
+     tar xvzf jdk7.tar.gz
+
+     if [[ -d /usr/local/java ]] 
+     then
+        rm -rf /usr/local/java
+     fi
+     check remove_java
+     
+     mv jdk1.7.0_60 /usr/local/java
+     echo "ubuntu shell editing"
+     for i in $(awk -F: '{if ($3 >= 1000 && $3 < 10000) print $1}' /etc/passwd)
+     do
+         echo "PATH=/usr/local/java/bin:$PATH" >> /home/$i/.bashrc
+     done
+
+    EOH
+ 
+ end
+
+
+when "linuxmint"
+ bash 'oracle_java_7_mintlinux' do
+     user "root"
+     cwd "/root"
+     code <<-EOH
+      check(){
+        if [[ $? != "0" ]]
+        then
+          echo "Failed on $1"
+          exit 1
+        else
+          echo "Success on $1"
+        fi
+       }
+
+      get_java(){
+        #http://stackoverflow.com/questions/10268583/how-to-automate-download-and-installation-of-java-jdk-on-linux?rq=1
+        wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://10.0.0.1/jdk7.tar.gz
       }
 
      get_java
@@ -52,7 +96,10 @@ when "debian","ubuntu"
      mv jdk1.7.0_60 /usr/local/java
      for i in $(awk -F: '{if ($3 >= 1000 && $3 < 10000) print $1}' /etc/passwd)
      do
-       echo "PATH=/usr/local/java/bin:$PATH" >> /home/$i/.bashrc
+       if [[ -e /home/$i/.profile && -d /home/$i ]]
+       then
+        echo "PATH=/usr/local/java/bin:$PATH" >> /home/$i/.profile
+       fi
      done
 
     EOH
@@ -76,7 +123,7 @@ when "debian","ubuntu"
 
       get_java(){
         #http://stackoverflow.com/questions/10268583/how-to-automate-download-and-installation-of-java-jdk-on-linux?rq=1
-        wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u60-b19/jdk-7u60-linux-x64.tar.gz -O jdk7.tar.gz
+        wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://10.0.0.1/jdk7.tar.gz
       }
 
      get_java
@@ -94,7 +141,7 @@ when "debian","ubuntu"
      mv jdk1.7.0_60 /usr/local/java
      for i in $(awk -F: '{if ($3 >= 500 && $3 < 10000) print $1}' /etc/passwd)
      do
-       echo "PATH=/usr/local/java/bin:$PATH" >> /home/$i/.bashrc
+        echo "PATH=/usr/local/java/bin:$PATH" >> /home/$i/.bashrc
      done
 
     EOH
@@ -103,7 +150,7 @@ when "debian","ubuntu"
   
 end
 
-file "/root/jdk-7u60-linux-x64.tar.gz" do
+file "/root/jdk7.tar.gz" do
      action :delete
      backup false
 end
