@@ -39,6 +39,7 @@ bash 'mysql_debian' do
    sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password rootpass'
    sudo apt-get update
    sudo apt-get -y install mysql-server-5.5 
+   service mysql start
    echo $?
    }
    

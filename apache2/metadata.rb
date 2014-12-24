@@ -1,4 +1,4 @@
-name             'apache_from_source'
+name             'apache2'
 maintainer       'Your Company, Inc.'
 maintainer_email 'cookbooks@yourcompany.com'
 license          'Apache 2.0'

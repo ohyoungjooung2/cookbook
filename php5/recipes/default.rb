@@ -38,6 +38,14 @@ bash 'php5_debian_from_sc' do
  
    p_inst
 
+   php_config(){
+     cp php.ini-development /usr/local/lib/php.ini
+     echo "###################################" >> /usr/local/apache/conf/httpd.conf
+     echo "<FilesMatch \.php$>" >> /usr/local/apache/conf/httpd.conf
+     echo "  SetHandler application/x-httpd-php" >> /usr/local/apache/conf/httpd.conf
+     echo "</FilesMatch>" >> /usr/local/apache/conf/httpd.conf
+   }
+
    echo "Downloading php source"
    wget http://10.0.0.1/php-5.5.15.tar.gz
    check wget_php
@@ -46,7 +54,12 @@ bash 'php5_debian_from_sc' do
    tar xvzf php-5.5.15.tar.gz
    cd php-5.5.15
    ./configure --with-apxs2=/usr/local/apache/bin/apxs --with-mysql
-   make && make install 
+   make  
+   check "php make"
+   make install
+   check "php make install"
+   php_config
+   check "php_config"
    echo "restarting apache"
    sleep 3
    /usr/local/apache/bin/apachectl restart
