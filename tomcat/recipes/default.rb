@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#include_recipe "java"
+include_recipe "java"
 
 user node[:tomcat][:user]do
   action :create
@@ -35,7 +35,7 @@ directory node[:tomcat][:dir] do
 end
 
 remote_file "#{Chef::Config[:file_cache_path]}/tomcat.tar.gz" do
-  source "http://mirror.apache-kr.org/tomcat/tomcat-8/v8.0.9/bin/apache-tomcat-8.0.9.tar.gz"
+  source "http://10.0.0.1/apache-tomcat-8.0.15.tar.gz"
   action :create_if_missing
 end
 
@@ -44,7 +44,7 @@ bash "install_tomcat8" do
   code <<-EOH
     rm -rf /usr/local/tomcat/*
     tar xvzf tomcat.tar.gz
-    mv apache-tomcat-8.0.9/* /usr/local/tomcat/
+    mv apache-tomcat-8.0.15/* /usr/local/tomcat/
     chown -R cat:cat /usr/local/tomcat
    EOH
 end
