@@ -8,3 +8,5 @@ default[:tomcat][:desc] = "Tomcat Servlet Engine 8"
 default[:tomcat][:default] = "/etc/default/tomcat8"
 default[:tomcat][:jvm_tmp] = "/tmp/tomcat8-tmp"
 default[:tomcat][:pid] = "/var/run/tomcat8.pid"
+default[:tomcat][:catalinaopts] = "-DJENKINS_HOME=/usr/local/tomcat/webapps/jenkins/ -Xmx512m"
+
