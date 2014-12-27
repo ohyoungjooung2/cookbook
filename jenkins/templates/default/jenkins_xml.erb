@@ -1,0 +1,4 @@
+<Context docBase="<%= node[:tomcat][:jenkins_war_path] %>">
+ <Environment name="JENKINS_HOME" type="java.lang.String"
+              value="<%= node[:tomcat][:jenkins_home]%>" override="true"/>
+</Context>
