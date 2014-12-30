@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe "tomcat"
+#include_recipe "tomcat"
 
 tu=node[:tomcat][:user] 
 tg=node[:tomcat][:group]
