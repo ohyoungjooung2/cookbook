@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe "java"
 include_recipe "tomcat"
 
 tu=node[:tomcat][:user] 
@@ -35,7 +34,6 @@ directory "jenkins base" do
    owner "root"
    group "root"
    mode "0755"
-   action :create
 end
 
 directory "jenkins home" do

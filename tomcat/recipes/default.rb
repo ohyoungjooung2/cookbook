@@ -18,6 +18,7 @@
 #
 include_recipe "java"
 
+
 user node[:tomcat][:user]do
   action :create
   system true
