@@ -17,7 +17,9 @@
 # limitations under the License.
 #
 include_recipe "java"
-
+tomcat_dir=node[:tomcat][:dir]
+tomcat_user=node[:tomcat][:user]
+tomcat_group=node[:tomcat][:group]
 
 user node[:tomcat][:user]do
   action :create
@@ -37,16 +39,16 @@ end
 
 remote_file "#{Chef::Config[:file_cache_path]}/tomcat.tar.gz" do
   source "http://10.0.0.1/apache-tomcat-8.0.15.tar.gz"
-  action :create_if_missing
+  action :create
 end
 
 bash "install_tomcat8" do
   cwd Chef::Config[:file_cache_path]
   code <<-EOH
-    rm -rf /usr/local/tomcat/*
+    rm -rf /usr/local/tomcat/
     tar xvzf tomcat.tar.gz
-    mv apache-tomcat-8.0.15/* /usr/local/tomcat/
-    chown -R cat:cat /usr/local/tomcat
+    mv apache-tomcat-8.0.15/ /usr/local/tomcat/
+    chown -R #{tomcat_user}:#{tomcat_group} #{tomcat_dir}
    EOH
 end
 

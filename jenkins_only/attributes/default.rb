@@ -1,6 +1,6 @@
 default[:tomcat][:dir] = "/usr/local/tomcat"
-default[:tomcat][:user] = "cat"
-default[:tomcat][:group] = "cat"
+default[:tomcat][:user] = "tomcat"
+default[:tomcat][:group] = "tomcat"
 default[:tomcat][:port] = "9000"
 default[:tomcat][:java_home] = "/usr/local/java"
 default[:tomcat][:java_opts] = "\"-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC\""

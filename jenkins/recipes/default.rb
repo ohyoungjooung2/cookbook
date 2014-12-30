@@ -47,7 +47,7 @@ directory "jenkins home" do
 
 service "tomcat" do
   provider Chef::Provider::Service::Init::Debian
-  supports :restart => true, :start => true, :stop => true 
+  #supports :restart => true, :start => true, :stop => true 
   action :stop
 end
 
@@ -57,5 +57,5 @@ template "#{jxml}" do
   group "#{tg}"
   mode "0600"
   action :create_if_missing
-  notifies :start, resources(:service => "tomcat")
+  #notifies :start, resources(:service => "tomcat")
 end
