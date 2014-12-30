@@ -26,7 +26,7 @@ jhome=node[:tomcat][:jenkins_home]
 jxml=node[:tomcat][:jenkins_xml]
 
 remote_file "#{node[:tomcat][:jenkins_war_path]}" do
-  source "http://10.0.0.1/jenkins.war"
+  source "http://10.0.0.1/jenkins-stable.war"
   action :create
 end
 
